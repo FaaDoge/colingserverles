@@ -1,0 +1,69 @@
+﻿@page "/afiliados"
+
+@inject IAfiliadoService servicio
+@inject SweetAlertService Swal
+@inject NavigationManager nav
+
+<h3>Listar Afiliados</h3>
+<div class="form-group row">
+    <div class="col-sm-10">
+        <a href="/afiliado/crear" class="btn btn-primary m-1">Agregar Nuevo</a>
+    </div>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><strong>ID</strong></th>
+                <th><strong>ID Persona</strong></th>
+                <th><strong>Fecha de Afiliación</strong></th>
+                <th><strong>Código de Afiliado</strong></th>
+                <th><strong>Número de Título Provisional</strong></th>
+                <th><strong>Estado</strong></th>
+                <th colspan="2"><strong>Opciones</strong></th>
+            </tr>
+        </thead>
+        @foreach (var afiliado in AfiliadosLista)
+        {
+            <tr>
+                <td>@afiliado.Id</td>
+                <td>@afiliado.IdPersona</td>
+                <td>@afiliado.FechaAfiliacion.ToShortDateString()</td>
+                <td>@afiliado.CodigoAfiliado</td>
+                <td>@afiliado.NroTituloProvisional</td>
+                <td>@afiliado.Estado</td>
+                <td><a href="/afiliado/modificar/@afiliado.Id" class="btn btn-primary m-1">Modificar</a></td>
+                <td><button class="btn btn-danger" @onclick="() => EliminarAfiliado(afiliado.Id)">Eliminar</button></td>
+            </tr>
+        }
+    </table>
+</div>
+
+@code {
+    public List<Afiliado> AfiliadosLista { get; set; } = new List<Afiliado>();
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE2MjY1MTk0fQ.OqBLdW6KzhTzBu7xNeJa3d_TjvicQcVzYlQ1V5a6j6A";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicio.ListarAfiliados(token);
+        AfiliadosLista = respuesta;
+    }
+
+    public async void EliminarAfiliado(int id)
+    {
+        /*
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Estás seguro?",
+                Text = "¿Deseas borrar este registro de afiliado?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Sí, borrarlo!",
+                CancelButtonText = "No, cancelar",
+            });
+
+        if (!result.IsConfirmed) return;*/
+        var respuesta = await servicio.EliminarAfiliado(id, token);
+        if (respuesta) { nav.NavigateTo("/afiliados", forceLoad: true); }
+    }
+}

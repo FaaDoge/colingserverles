@@ -1,0 +1,65 @@
+﻿@page "/solicitudes"
+
+@inject ISolicitudService servicio
+@inject SweetAlertService Swal
+@inject NavigationManager nav
+
+<h3>Listar Solicitudes</h3>
+<div class="form-group row">
+    <div class="col-sm-10">
+        <a href="/solicitud/crear" class="btn btn-primary m-1">Agregar Nuevo</a>
+    </div>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><strong>Nombre</strong></th>
+                <th><strong>Fecha de Postulación</strong></th>
+                <th><strong>Pretensión Salarial</strong></th>
+                <th><strong>Estado</strong></th>
+                <th colspan="2"><strong>Opciones</strong></th>
+            </tr>
+        </thead>
+        @foreach (var solicitud in SolicitudesLista)
+        {
+            <tr>
+                <td>@solicitud.Nombre</td>
+                <td>@solicitud.FechaPostulacion</td>
+                <td>@solicitud.PretencionSalarial</td>
+                <td>@solicitud.Estado</td>
+                <td><a href="/solicitud/editar/@solicitud.Id" class="btn btn-primary m-1">Editar</a></td>
+                <td><button class="btn btn-danger" @onclick="() => EliminarSolicitud(solicitud.Id)">Eliminar</button></td>
+            </tr>
+        }
+    </table>
+</div>
+
+@code {
+    public List<Solicitud> SolicitudesLista { get; set; } = new List<Solicitud>();
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE2MjY1MTk0fQ.OqBLdW6KzhTzBu7xNeJa3d_TjvicQcVzYlQ1V5a6j6A";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicio.ListaSolicitudes(token);
+        SolicitudesLista = respuesta;
+    }
+
+    public async void EliminarSolicitud(string id)
+    {
+        /*
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Estás seguro?",
+                Text = "¿Deseas borrar este registro de solicitud?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Sí, borrarlo!",
+                CancelButtonText = "No, cancelar",
+            });
+
+        if (!result.IsConfirmed) return;*/
+        var respuesta = await servicio.BorrarSolicitud(id, token);
+        if (respuesta) { nav.NavigateTo("/solicitudes", forceLoad: true); }
+    }
+}

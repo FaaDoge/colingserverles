@@ -1,0 +1,46 @@
+﻿@page "/solicitud/editar/{id}"
+@inject ISolicitudService servicio
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar Solicitud</h3>
+
+@if (solicitud != null)
+{
+    <SolicitudFormularioVista @ref="solicitudForm" solicitud="solicitud" OnValidSubmit="Editar" Cancelar="Navegar"></SolicitudFormularioVista>
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private SolicitudFormularioVista? solicitudForm;
+    private Solicitud solicitud;
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE2MjY1MTk0fQ.OqBLdW6KzhTzBu7xNeJa3d_TjvicQcVzYlQ1V5a6j6A";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicio.ObtenerSolicitudPorId(Id, token);
+        solicitud = respuesta;
+    }
+
+    private async Task Editar()
+    {
+        var respuesta = await servicio.EditarSolicitud(Id, solicitud,token);
+        if (!respuesta)
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo guardar", SweetAlertIcon.Error);
+            return;
+        }
+        Navegar();
+    }
+
+    private void Navegar()
+    {
+        solicitudForm!.formularioPostOk = true;
+        nav.NavigateTo("/solicitudes", forceLoad: true);
+    }
+}

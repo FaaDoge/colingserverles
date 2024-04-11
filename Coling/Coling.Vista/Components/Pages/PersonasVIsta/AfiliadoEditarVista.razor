@@ -1,0 +1,50 @@
+﻿@page "/afiliado/modificar/{Id}"
+@inject IAfiliadoService servicio
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar Afiliado</h3>
+
+@if (afiliado != null)
+{
+    <AfiliadoFormularioVista @ref="afiliadoForm" afiliado="afiliado" OnValidSubmit="Editar" Cancelar="Navegar"></AfiliadoFormularioVista>
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    public int IdAfiliado { get; set; }
+    private AfiliadoFormularioVista? afiliadoForm;
+    private Afiliado afiliado;
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE2MjY1MTk0fQ.OqBLdW6KzhTzBu7xNeJa3d_TjvicQcVzYlQ1V5a6j6A";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        IdAfiliado = int.Parse(Id);
+        var respuesta = await servicio.ObtenerAfiliadoPorId(IdAfiliado, token);
+        afiliado = respuesta;
+    }
+
+    private async Task Editar()
+    {
+        var respuesta = await servicio.ModificarAfiliado(IdAfiliado, token);
+        if (!respuesta)
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo guardar", SweetAlertIcon.Error);
+            return;
+        }
+        Navegar();
+    }
+
+    private void Navegar()
+    {
+        afiliadoForm!.formularioPostOk = true;
+        nav.NavigateTo("/afiliados", forceLoad: true);
+    }
+
+}
