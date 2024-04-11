@@ -1,0 +1,104 @@
+﻿@inject SweetAlertService sweet
+
+@*<NavigationLock OnBeforeInternalNavigation="AntesDeNavegarInternamente" />*@
+
+<EditForm EditContext="contextoEdicion" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>Afiliado:</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@estudios.IdAfiliado" />
+            <ValidationMessage For="@(() => estudios.IdAfiliado)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Tipo Estudio:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@estudios.TipoEstudio" />
+            <ValidationMessage For="@(() => estudios.TipoEstudio)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Nombre Grado:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@estudios.NombreGrado" />
+            <ValidationMessage For="@(() => estudios.NombreGrado)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Titulo Recibido:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@estudios.TituloRecibido" />
+            <ValidationMessage For="@(() => estudios.TituloRecibido)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Insitucion</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@estudios.NombreInstitucion" />
+            <ValidationMessage For="@(() => estudios.NombreInstitucion)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Año:</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@estudios.Anio" />
+            <ValidationMessage For="@(() => estudios.Anio)" />
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <button class="btn btn-primary" @onclick="Cancelar">Cancelar</button>
+
+</EditForm>
+
+@code {
+    private EditContext contextoEdicion = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public Estudios estudios { get; set; } = null;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback Cancelar { get; set; }
+
+    public bool formularioPostOk { get; set; }
+
+    protected override void OnInitialized()
+    {
+        contextoEdicion = new(estudios);
+    }
+
+    private async Task AntesDeNavegarInternamente(LocationChangingContext contexto)
+    {
+        var formularioModificado = contextoEdicion.IsModified();
+
+        if (!formularioModificado || formularioPostOk)
+        {
+            return;
+        }
+
+        var result = await sweet.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmacion",
+                Text = "Desea abandonar esta pantalla? Perdera los cambios",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+        if (confirm)
+            return;
+
+        contexto.PreventNavigation();
+    }
+}

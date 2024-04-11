@@ -1,0 +1,60 @@
+﻿@page "/direcciones"
+@inject IDireccionService servicioDireccion
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager nav
+
+<h3>Listar Direcciones</h3>
+<div class="form-group row">
+    <div class="col-sm-10">
+        <a href="/direccion/crear" class="btn btn-primary m-1">Agregar Nueva</a>
+    </div>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><strong>Descripción</strong></th>
+                <th><strong>Estado</strong></th>
+                <th colspan="2"><strong>Opciones</strong></th>
+            </tr>
+        </thead>
+        @foreach (var direccion in DireccionesLista)
+        {
+            <tr>
+                <td>@direccion.Descripcion</td>
+                <td>@direccion.Estado</td>
+                <td><a href="/direccion/editar/@direccion.Id" class="btn btn-primary m-1">Editar</a></td>
+                <td><button class="btn btn-danger" @onclick="() => EliminarDireccion(direccion.Id)">Eliminar</button></td>
+            </tr>
+        }
+    </table>
+</div>
+
+@code {
+    public List<Direccion> DireccionesLista { get; set; } = new List<Direccion>();
+    private string token = "tu_token";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicioDireccion.ListaDirecciones(token);
+        DireccionesLista = respuesta;
+    }
+
+    public async void EliminarDireccion(int id)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Estás seguro?",
+                Text = "¿Deseas borrar esta dirección?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Sí, borrarla!",
+                CancelButtonText = "No, cancelar",
+            });
+
+        if (!result.IsConfirmed) return;
+
+        var respuesta = await servicioDireccion.EliminarDireccion(id, token);
+        if (respuesta) { nav.NavigateTo("/direcciones", forceLoad: true); }
+    }
+}

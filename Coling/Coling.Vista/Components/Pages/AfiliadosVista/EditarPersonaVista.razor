@@ -1,0 +1,46 @@
+﻿@page "/persona/editar/{id}"
+@inject IPersonaService servicio
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar Persona</h3>
+
+@if (persona != null)
+{
+    <PersonaFormularioVista @ref="perForm" persona="persona" OnValidSubmit="Editar" Cancelar="Navegar"></PersonaFormularioVista>
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private PersonaFormularioVista? perForm;
+    private Persona persona;
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE2MjY1MTk0fQ.OqBLdW6KzhTzBu7xNeJa3d_TjvicQcVzYlQ1V5a6j6A";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicio.ObtenerPersonaPorId(Id, token);
+        persona = respuesta;
+    }
+
+    private async Task Editar()
+    {
+        var respuesta = await servicio.EditarPersona(Id, token);
+        if (!respuesta)
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo guardar", SweetAlertIcon.Error);
+            return;
+        }
+        Navegar();
+    }
+
+    private void Navegar()
+    {
+        perForm!.formularioPostOk = true;
+        nav.NavigateTo("/personas", forceLoad: true);
+    }
+}
