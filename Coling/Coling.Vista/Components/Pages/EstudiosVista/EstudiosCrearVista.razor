@@ -1,0 +1,34 @@
+﻿@page "/estudios/crear"
+@inject IEstudiosServices servicio
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+
+<h3>Crear Institucion</h3>
+
+<EstudiosFormularioVita @ref="insForm" estudios="estudios" OnValidSubmit="Crear" Cancelar="Navegar"></EstudiosFormularioVita>
+
+@code {
+    private Estudios estudios = new();
+    private EstudiosFormularioVita? insForm;
+
+    private async Task Crear()
+    {
+        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE0MDA1NDA3fQ.0xvrU50bm9jqZxt9Di41-7fh83opvqoTCoaNNw8yKAU";
+        estudios.PartitionKey = "Educacion";
+        estudios.Estado = "Activo";
+        var respuesta = await servicio.Insertar(estudios, token);
+        if(!respuesta)
+        {
+            await sweetAlertService.FireAsync("Error","No se pudo guardar",SweetAlertIcon.Error);
+            return;
+        }
+        Navegar();
+    }
+
+    private void Navegar()
+    {
+        insForm!.formularioPostOk = true;
+        nav.NavigateTo("/estudios",forceLoad: true);
+    }
+}

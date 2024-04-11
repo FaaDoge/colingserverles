@@ -1,0 +1,66 @@
+﻿﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Coling.Vista</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <h4>AFILIADOS:</h4>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/personas">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Personas
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/afiliados">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Afiliados
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/direcciones">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Direccion
+            </NavLink>
+        </div>
+        <h4>CURRICULUM:</h4>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/profesiones">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Profesiones
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/experienciaslaborales">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Experiencias Laborales
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/instituciones">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Instituciones
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/estudios">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Estudios
+            </NavLink>
+        </div>
+        <h4>MONGO DB:</h4>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/solicitudes">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Solicitud
+            </NavLink>
+        </div>
+    </nav>
+</div>

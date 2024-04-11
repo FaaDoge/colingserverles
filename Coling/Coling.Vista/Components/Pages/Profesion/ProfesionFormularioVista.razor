@@ -1,0 +1,71 @@
+﻿@inject SweetAlertService sweet
+
+<EditForm EditContext="contextoEdicion" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>Nombre Profesión:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@profesion.NombreProfesion" />
+            <ValidationMessage For="@(() => profesion.NombreProfesion)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Nombre Grado:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@profesion.NombreGrado" />
+            <ValidationMessage For="@(() => profesion.NombreGrado)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    private EditContext contextoEdicion = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public Profesion profesion { get; set; } = null;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback Cancelar { get; set; }
+
+    public bool formularioPostOk { get; set; }
+
+    protected override void OnInitialized()
+    {
+        contextoEdicion = new(profesion);
+    }
+
+    private async Task AntesDeNavegarInternamente(LocationChangingContext contexto)
+    {
+        var formularioModificado = contextoEdicion.IsModified();
+
+        if (!formularioModificado || formularioPostOk)
+        {
+            return;
+        }
+
+        var result = await sweet.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmacion",
+                Text = "Desea abandonar esta pantalla? Perdera los cambios",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+        if (confirm)
+            return;
+
+        contexto.PreventNavigation();
+    }
+}

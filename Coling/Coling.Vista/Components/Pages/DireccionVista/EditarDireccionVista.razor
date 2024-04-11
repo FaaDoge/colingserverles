@@ -1,0 +1,48 @@
+﻿@page "/direccion/editar/{id}"
+@inject IDireccionService servicioDireccion
+@inject NavigationManager nav
+@inject SweetAlertService sweetAlertService
+
+<h3>Editar Dirección</h3>
+
+@if (direccion != null)
+{
+    <DireccionFormularioVista @ref="dirForm" direccion="direccion" OnValidSubmit="Editar" Cancelar="Navegar"></DireccionFormularioVista>
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private DireccionFormularioVista? dirForm;
+    private Direccion direccion;
+    private string token = "tu_token";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicioDireccion.ObtenerDireccionPorId(Id, token);
+        direccion = respuesta;
+    }
+
+    private async Task Editar()
+    {
+        var respuesta = await servicioDireccion.ModificarDireccion(direccion, token);
+        if (!respuesta)
+        {
+            await sweetAlertService.FireAsync("Error", "No se pudo guardar la dirección", SweetAlertIcon.Error);
+            return;
+        }
+        Navegar();
+    }
+
+    private void Navegar()
+    {
+        dirForm!.formularioPostOk = true;
+        nav.NavigateTo("/direcciones", forceLoad: true);
+    }
+}
+
+

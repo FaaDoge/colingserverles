@@ -1,0 +1,63 @@
+﻿@inject SweetAlertService sweet
+
+<EditForm EditContext="contextoEdicion" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>Nombre Institución:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@experienciaLaboral.NombreInstitucion" />
+            <ValidationMessage For="@(() => experienciaLaboral.NombreInstitucion)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Cargo Título:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@experienciaLaboral.CargoTitulo" />
+            <ValidationMessage For="@(() => experienciaLaboral.CargoTitulo)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha Inicio:</label>
+        <div>
+            <InputDate class="form-control" @bind-Value="@experienciaLaboral.FechaInicio" />
+            <ValidationMessage For="@(() => experienciaLaboral.FechaInicio)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha Final:</label>
+        <div>
+            <InputDate class="form-control" @bind-Value="@experienciaLaboral.FechaFinal" />
+            <ValidationMessage For="@(() => experienciaLaboral.FechaFinal)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
+
+@code {
+    private EditContext contextoEdicion = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public ExperienciaLaboral experienciaLaboral { get; set; } = null;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback Cancelar { get; set; }
+
+    public bool formularioPostOk { get; set; }
+
+    protected override void OnInitialized()
+    {
+        contextoEdicion = new(experienciaLaboral);
+    }
+
+    // Métodos adicionales como en las vistas originales
+}

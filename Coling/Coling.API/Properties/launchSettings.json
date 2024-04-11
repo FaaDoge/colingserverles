@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Coling.API": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7291",
+      "environmentVariables": {
+        "LlaveSecreta": "jhps47-mmaohfoiuire3455680jsjdfhl1510TJTJSKfxsdffjajsjajs*"
+      }
+    }
+  }
+}
