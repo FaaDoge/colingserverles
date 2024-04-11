@@ -1,4 +1,5 @@
-﻿using Coling.Vista.Servicios;
+﻿using Coling.Vista.Modelos;
+using Coling.Vista.Servicios;
 using Coling.Vista.Servicios.Afiliados;
 using Coling.Vista.Servicios.Curriculum;
 using CurrieTechnologies.Razor.SweetAlert2;
@@ -27,6 +28,10 @@ namespace Coling.Vista
             builder.Services.AddScoped<IAfiliadoService, AfiliadoService>();
             builder.Services.AddScoped<ISolicitudService, SolicitudService>();
             builder.Services.AddScoped<IDireccionService, DireccionService>();
+            builder.Services.AddScoped<IExperienciaLaboralService, ExperienciaLaboralService>();
+            builder.Services.AddScoped<IProfesionService, ProfesionService>();
+
+
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

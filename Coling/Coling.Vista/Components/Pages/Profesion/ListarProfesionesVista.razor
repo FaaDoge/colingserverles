@@ -1,0 +1,59 @@
+﻿@page "/profesiones"
+
+@inject IProfesionService servicio
+@inject SweetAlertService Swal
+@inject NavigationManager nav
+
+<h3>Listar Profesiones</h3>
+<div class="form-group row">
+    <div class="col-sm-10">
+        <a href="/profesiones/crear" class="btn btn-primary m-1">Agregar Nuevo</a>
+    </div>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th><strong>Nombre Profesión</strong></th>
+                <th><strong>Grado</strong></th>
+                <th colspan="2"><strong>Opciones</strong></th>
+            </tr>
+        </thead>
+        @foreach (var item in ProfesionLista)
+        {
+            <tr>
+                <td>@item.NombreProfesion</td>
+                <td>@item.NombreGrado</td>
+                <td><a href="/profesiones/editar/@item.RowKey" class="btn btn-primary m-1">Editar</a></td>
+                <td><button class="btn btn-danger" @onclick="() => Eliminar(item.PartitionKey, item.RowKey)">Eliminar</button></td>
+            </tr>
+        }
+    </table>
+</div>
+
+@code {
+    public List<Profesion> ProfesionLista { get; set; } = new List<Profesion>();
+    string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoidXNlciIsInJvbCI6IkFkbWluIiwiZXN0YWRvIjoiQWN0aXZvIiwiZXhwIjoxNzE0MDA1NDA3fQ.0xvrU50bm9jqZxt9Di41-7fh83opvqoTCoaNNw8yKAU";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var respuesta = await servicio.Listar(token);
+        ProfesionLista = respuesta;
+    }
+    public async void Eliminar(string PK, string RK)
+    {
+        var result = await Swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "¿Estás seguro?",
+                Text = "¿Deseas borrar este registro de profesion?",
+                Icon = SweetAlertIcon.Warning,
+                ShowCancelButton = true,
+                ConfirmButtonText = "Sí, borrarlo!",
+                CancelButtonText = "No, cancelar",
+            });
+
+        if (!result.IsConfirmed) return;
+        var respuesta = await servicio.Borrar(PK, RK, token);
+        if (respuesta) { nav.NavigateTo("/profesiones", forceLoad: true); }
+    }
+}
